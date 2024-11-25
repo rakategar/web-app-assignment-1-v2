@@ -27,9 +27,13 @@ func (c *categoryRepository) Store(Category *model.Category) error {
 }
 
 func (c *categoryRepository) Update(id int, category model.Category) error {
-	c.filebasedDb.UpdateCategory(id,category)
-	return nil // TODO: replace this
+	err := c.filebasedDb.UpdateCategory(id, category)
+	if err != nil {
+		return err
+	}
+	return nil
 }
+
 
 func (c *categoryRepository) Delete(id int) error {
 	c.filebasedDb.DeleteCategory(id)

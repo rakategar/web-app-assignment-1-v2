@@ -43,13 +43,19 @@ func (t *taskAPI) AddTask(c *gin.Context) {
 }
 
 func (t *taskAPI) UpdateTask(c *gin.Context) {
-	var newTask model.Task
-	if err := c.ShouldBindJSON(&newTask); err != nil {
+	intId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid task ID"})
 		return
 	}
 
-	err := t.taskService.Update(&newTask)
+	var updatedTask model.Task
+	if err := c.ShouldBindJSON(&updatedTask); err != nil {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
+		return
+	}
+	updatedTask.ID = intId
+	err = t.taskService.Update(&updatedTask)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -60,13 +66,13 @@ func (t *taskAPI) UpdateTask(c *gin.Context) {
 }
 
 func (t *taskAPI) DeleteTask(c *gin.Context) {
-	var newTask model.Task
-	if err := c.ShouldBindJSON(&newTask); err != nil {
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid task ID"})
-		return
-	}
+	intId, err := strconv.Atoi(c.Param("id"))
+if err != nil {
+    c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: "Invalid task ID"})
+    return
+}
 
-	err := t.taskService.Delete(newTask.ID)
+	err = t.taskService.Delete(intId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
